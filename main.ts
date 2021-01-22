@@ -4,7 +4,7 @@ enum RadioMessage {
     right = 32391
 }
 input.onButtonPressed(Button.A, function () {
-    while (begin) {
+    if (begin) {
         speler = A
         basic.showString("A")
         radio.sendString("A")
@@ -14,13 +14,15 @@ radio.onReceivedString(function (receivedString) {
     if (begin) {
         if (receivedString == "A") {
             A = true
+            Ander_speler = A
         } else if (receivedString == "B") {
             B = true
+            Ander_speler = B
         }
     }
 })
 input.onButtonPressed(Button.B, function () {
-    while (begin) {
+    if (begin) {
         speler = B
         basic.showString("B")
         radio.sendString("B")
@@ -34,6 +36,7 @@ radio.onReceivedMessage(RadioMessage.wrong, function () {
     aantal_nog += -1
 })
 let aantal_nog = 0
+let Ander_speler = false
 let speler = false
 let aantal_goed = 0
 let score = 0
@@ -46,12 +49,14 @@ begin = true
 let Vraag = 0
 B = false
 A = false
-if (A && B) {
-    Quiz = true
-    begin = false
+let punt = 2
+while (begin) {
+    if (A && B) {
+        Quiz = true
+        begin = false
+    }
 }
 while (Quiz) {
-    let punt = 0
     if (Vraag <= 3) {
         while (Vraag <= 3) {
             if (input.buttonIsPressed(Button.B)) {
