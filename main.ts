@@ -8,8 +8,6 @@ enum RadioMessage {
 }
 radio.onReceivedNumber(function (receivedNumber) {
     ander_score = receivedNumber
-    end = true
-    Quiz = false
 })
 function Vraag_4 () {
     basic.clearScreen()
@@ -31,6 +29,10 @@ function Vraag_4 () {
         aantal_goed = 0
         punt = 2
         Vraag += 1
+        radio.sendNumber(score)
+        basic.pause(2000)
+        end = true
+        Quiz = false
     }
 }
 input.onButtonPressed(Button.A, function () {
@@ -120,12 +122,6 @@ Bready = false
 Aready = false
 punt = 2
 basic.forever(function () {
-    if (Quiz) {
-        if (0 <= 0) {
-            aantal_goed = 0
-            Vraag += 1
-        }
-    }
     while (Quiz) {
         basic.clearScreen()
         if (Vraag == 1) {
@@ -138,8 +134,6 @@ basic.forever(function () {
             Vraag_13()
         } else if (Vraag == 3) {
             Vraag_13()
-        } else if (Vraag > 4) {
-            radio.sendNumber(score)
         }
     }
     while (end) {
@@ -148,8 +142,10 @@ basic.forever(function () {
         } else {
             basic.showIcon(IconNames.Sad)
         }
+        basic.pause(2000)
         basic.showString(Jij)
         basic.showNumber(score)
+        basic.pause(2000)
         basic.showString(Ander)
         basic.showNumber(ander_score)
     }
