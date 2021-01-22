@@ -13,7 +13,11 @@ function Vraag_4 () {
     basic.clearScreen()
     if (input.buttonIsPressed(Button.A)) {
         geweest = true
-        score += punt - aantal_goed
+        if (ander_geweest) {
+            score += 1
+        } else {
+            score += 2
+        }
         radio.sendMessage(RadioMessage.right)
         basic.showIcon(IconNames.Yes)
     } else if (input.buttonIsPressed(Button.B)) {
@@ -27,7 +31,6 @@ function Vraag_4 () {
         ander_geweest = false
         geweest = false
         aantal_goed = 0
-        punt = 2
         Vraag += 1
         radio.sendNumber(score)
         basic.pause(2000)
@@ -47,12 +50,17 @@ radio.onReceivedMessage(RadioMessage.ready, function () {
     radio.sendMessage(RadioMessage.ready2)
     begin = false
     Quiz = true
+    Vraag = 1
 })
 function Vraag_13 () {
     basic.clearScreen()
     if (input.buttonIsPressed(Button.B)) {
         geweest = true
-        score += punt - aantal_goed
+        if (ander_geweest) {
+            score += 1
+        } else {
+            score += 2
+        }
         radio.sendMessage(RadioMessage.right)
         basic.showIcon(IconNames.Yes)
     } else if (input.buttonIsPressed(Button.A)) {
@@ -66,13 +74,13 @@ function Vraag_13 () {
         ander_geweest = false
         geweest = false
         aantal_goed = 0
-        punt = 2
         Vraag += 1
     }
 }
 radio.onReceivedMessage(RadioMessage.ready2, function () {
     begin = false
     Quiz = true
+    Vraag = 1
 })
 radio.onReceivedString(function (receivedString) {
     if (begin) {
@@ -102,14 +110,14 @@ radio.onReceivedMessage(RadioMessage.wrong, function () {
 })
 let Ander = ""
 let Jij = ""
-let ander_geweest = false
 let aantal_goed = 0
 let score = 0
+let ander_geweest = false
 let geweest = false
 let ander_score = 0
-let punt = 0
 let Aready = false
 let Bready = false
+let Vraag = 0
 let end = false
 let Quiz = false
 let begin = false
@@ -117,10 +125,9 @@ radio.setGroup(50)
 begin = true
 Quiz = false
 end = false
-let Vraag = 0
+Vraag = 0
 Bready = false
 Aready = false
-punt = 2
 basic.forever(function () {
     while (Quiz) {
         basic.clearScreen()
@@ -139,6 +146,8 @@ basic.forever(function () {
     while (end) {
         if (score > ander_score) {
             basic.showIcon(IconNames.Happy)
+        } else if (score == ander_score) {
+            basic.showIcon(IconNames.Asleep)
         } else {
             basic.showIcon(IconNames.Sad)
         }
