@@ -3,24 +3,42 @@ enum RadioMessage {
     wrong = 39922,
     right = 32391,
     ready = 31336,
-    ready2 = 64034
+    ready2 = 64034,
+    end = 34413
 }
-function Vraag_1_3 () {
-    if (input.buttonIsPressed(Button.B)) {
+radio.onReceivedNumber(function (receivedNumber) {
+    ander_score = receivedNumber
+    end = true
+    Quiz = false
+})
+function Vraag_4 () {
+    basic.clearScreen()
+    if (input.buttonIsPressed(Button.A)) {
+        geweest = true
         score += punt - aantal_goed
         radio.sendMessage(RadioMessage.right)
         basic.showIcon(IconNames.Yes)
-    } else if (input.buttonIsPressed(Button.A)) {
+    } else if (input.buttonIsPressed(Button.B)) {
+        geweest = true
         radio.sendMessage(RadioMessage.wrong)
         basic.showIcon(IconNames.No)
+    } else if (geweest) {
+        basic.showIcon(IconNames.Chessboard)
+    }
+    if (ander_geweest && geweest) {
+        ander_geweest = false
+        geweest = false
+        aantal_goed = 0
+        punt = 2
+        Vraag += 1
     }
 }
 input.onButtonPressed(Button.A, function () {
     if (begin) {
-        speler = A
         basic.showString("A")
         radio.sendString("A")
         Aready = true
+        Jij = "A"
     }
 })
 radio.onReceivedMessage(RadioMessage.ready, function () {
@@ -28,82 +46,111 @@ radio.onReceivedMessage(RadioMessage.ready, function () {
     begin = false
     Quiz = true
 })
+function Vraag_13 () {
+    basic.clearScreen()
+    if (input.buttonIsPressed(Button.B)) {
+        geweest = true
+        score += punt - aantal_goed
+        radio.sendMessage(RadioMessage.right)
+        basic.showIcon(IconNames.Yes)
+    } else if (input.buttonIsPressed(Button.A)) {
+        geweest = true
+        radio.sendMessage(RadioMessage.wrong)
+        basic.showIcon(IconNames.No)
+    } else if (geweest) {
+        basic.showIcon(IconNames.Chessboard)
+    }
+    if (ander_geweest && geweest) {
+        ander_geweest = false
+        geweest = false
+        aantal_goed = 0
+        punt = 2
+        Vraag += 1
+    }
+}
 radio.onReceivedMessage(RadioMessage.ready2, function () {
     begin = false
     Quiz = true
 })
 radio.onReceivedString(function (receivedString) {
     if (begin) {
+        Ander = receivedString
         if (receivedString == "A") {
             Aready = true
-            Ander_speler = A
         } else if (receivedString == "B") {
             Bready = true
-            Ander_speler = B
             radio.sendMessage(RadioMessage.ready)
         }
     }
 })
 input.onButtonPressed(Button.B, function () {
     if (begin) {
-        speler = B
         basic.showString("B")
         radio.sendString("B")
         Bready = true
+        Jij = "B"
     }
 })
 radio.onReceivedMessage(RadioMessage.right, function () {
     aantal_goed += 1
-    aantal_nog += -1
+    ander_geweest = true
 })
 radio.onReceivedMessage(RadioMessage.wrong, function () {
-    aantal_nog += -1
+    ander_geweest = true
 })
-let aantal_nog = 0
-let B = 0
-let Ander_speler = 0
-let Quiz = false
-let A = 0
-let speler = 0
+let Ander = ""
+let Jij = ""
+let ander_geweest = false
 let aantal_goed = 0
 let score = 0
+let geweest = false
+let ander_score = 0
 let punt = 0
 let Aready = false
 let Bready = false
+let end = false
+let Quiz = false
 let begin = false
 radio.setGroup(50)
 begin = true
+Quiz = false
+end = false
 let Vraag = 0
 Bready = false
 Aready = false
 punt = 2
 basic.forever(function () {
     if (Quiz) {
-        if (aantal_nog == 0) {
-            aantal_nog = 2
+        if (0 <= 0) {
             aantal_goed = 0
             Vraag += 1
         }
     }
     while (Quiz) {
         basic.clearScreen()
-        if (Vraag == Vraag + 1) {
-            Vraag_1_3()
+        if (Vraag == 1) {
+            Vraag_13()
         } else if (Vraag > 4) {
             Quiz = false
-        } else {
-            if (Vraag == 4) {
-                while (Vraag == 4) {
-                    if (input.buttonIsPressed(Button.A)) {
-                        score += punt - aantal_goed
-                        radio.sendMessage(RadioMessage.right)
-                        basic.showIcon(IconNames.Yes)
-                    } else if (input.buttonIsPressed(Button.B)) {
-                        radio.sendMessage(RadioMessage.wrong)
-                        basic.showIcon(IconNames.No)
-                    }
-                }
-            }
+        } else if (Vraag == 4) {
+            Vraag_4()
+        } else if (Vraag == 2) {
+            Vraag_13()
+        } else if (Vraag == 3) {
+            Vraag_13()
+        } else if (Vraag > 4) {
+            radio.sendNumber(score)
         }
+    }
+    while (end) {
+        if (score > ander_score) {
+            basic.showIcon(IconNames.Happy)
+        } else {
+            basic.showIcon(IconNames.Sad)
+        }
+        basic.showString(Jij)
+        basic.showNumber(score)
+        basic.showString(Ander)
+        basic.showNumber(ander_score)
     }
 })
